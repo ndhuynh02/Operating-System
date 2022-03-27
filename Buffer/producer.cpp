@@ -59,18 +59,18 @@ int main(int	argc, char	*argv[])
 
 	//sendval = 0;
 	while (1) {		// Both parent and child process run
-		
+		char ch = fgetc(input);		// read file char by char
+		if (ch == EOF) {
+			buf->done = 1;
+			break;
+		}
+
 		while (buf->count >= MAXSIZE);
 		usleep(50000);
 		sem_wait(semid, &sem, ~IPC_NOWAIT);
 
 		// Critical section
 		//buf->buffer[buf->in] = sendval;
-		char ch = fgetc(input);
-		if (ch == EOF) {
-			buf->done = 1;
-			break;
-		}
 		buf->buffer[buf->in] = ch;
 		printf("count %d position %d value %c\n", buf->count, buf->in, buf->buffer[buf->in]);
 		buf->in = (buf->in+1) % MAXSIZE;

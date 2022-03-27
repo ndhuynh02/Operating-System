@@ -35,12 +35,18 @@ int main(int argc, char	*argv[])
 		while (buf->count == 0);
 		usleep(50000);
 		sem_wait(semid, &sem, ~IPC_NOWAIT);
+
 		i = buf->buffer[buf->out];
 		printf("%c\n", i);
-		fputc (i, output);
+		fputc (i, output);	// write file char by char
 		buf->out = (buf->out+1) % MAXSIZE;
 		buf->count--;
+		
 		sem_signal(semid, &sem, ~IPC_NOWAIT);
+
+		if (buf->done == 1 && buf->count == 0){
+			break;
+		}
 	}
 	fclose(output);
 }
